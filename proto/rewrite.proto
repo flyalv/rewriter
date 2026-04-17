@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package rewriter;
+
+option go_package = "styleshift/api/proto/rewriter";
+
+service Rewriter {
+  rpc Rewrite(RewriteRequest) returns (RewriteResponse);
+}
+
+message RewriteRequest {
+  string text = 1;
+  string style = 2;
+}
+
+message RewriteResponse {
+  string original_text = 1;
+  string rewritten_text = 2;
+  string applied_style = 3;
+}
