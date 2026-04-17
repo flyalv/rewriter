@@ -1,0 +1,27 @@
+info:
+  name: /rewrite
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{base_url}}/rewrite"
+  body:
+    type: json
+    data: |-
+      {
+        "text": "Hi, I'm Michael, I'm an English teacher.",
+        "style": "official"
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: base_url
+      value: http://localhost:8080/api/v1
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

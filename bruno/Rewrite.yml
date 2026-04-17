@@ -1,0 +1,16 @@
+info:
+  name: Rewrite
+  type: grpc
+  seq: 3
+
+grpc:
+  url: localhost:50051
+  method: /rewriter.Rewriter/Rewrite
+  methodType: unary
+  protoFilePath: ../proto/rewrite.proto
+  message: |-
+    {
+      "text": "Hi, I'm Michael, I'm an English teacher.",
+      "style": "official"
+    }
+  auth: inherit

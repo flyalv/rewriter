@@ -1,0 +1,6 @@
+name: urls
+variables:
+  - name: base_url_without_ver
+    value: http://localhost:8080
+  - name: base_url
+    value: http://localhost:8080/api/v1
