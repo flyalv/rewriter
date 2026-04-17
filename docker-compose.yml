@@ -1,0 +1,60 @@
+services:
+    ollama:
+        image: ollama/ollama:latest
+        ports:
+            - "11434:11434"
+        volumes:
+            - ollama_data:/root/.ollama
+        command: serve
+        healthcheck:
+            test: ["CMD", "ollama", "list"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    pull-model:
+        image: ollama/ollama:latest
+        volumes:
+            - ollama_data:/root/.ollama
+        depends_on:
+            ollama:
+                condition: service_healthy
+        environment:
+            - OLLAMA_HOST=http://ollama:11434
+        entrypoint: >
+            sh -c "
+            ollama pull phi3:mini &&
+            echo '✅ Model phi3:mini downloaded successfully' &&
+            exit 0
+            "
+
+    ml-service:
+        build:
+            context: ./ml-service
+        ports:
+            - "50051:50051"
+        volumes:
+            - ./ml-service:/app
+        depends_on:
+            pull-model:
+                condition: service_completed_successfully
+        environment:
+            - OLLAMA_HOST=http://ollama:11434
+            - GRPC_HOST=0.0.0.0
+            - GRPC_PORT=50051
+
+    backend:
+        build: ./backend
+        ports:
+            - "8080:8080"
+        volumes:
+            - ./backend:/app
+        depends_on:
+            - ml-service
+        environment:
+            - GRPC_HOST=ml-service
+            - GRPC_PORT=50051
+            - HTTP_PORT=8080
+
+volumes:
+    ollama_data:
